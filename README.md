@@ -40,7 +40,7 @@ This is a structure that looks similar to a regular _IO_FILE struct, but is used
     };
 
 
-However it's not the structure that we're interested in, it's the cornerstone of most FSOP techniques the vtable: _wide_data jumptable to be more specific, or as it's called in GLIBC source code 
+But we are not really interested in this particular structure but in the cornerstone of most FSOP exploitaion techniques: the vtable also known as  _wida_data vtable or as it's called in GLIBC source code:
     
     const struct _IO_jump_t _IO_wstrn_jumps = {
         __dummy = 0x0,
@@ -66,10 +66,10 @@ However it's not the structure that we're interested in, it's the cornerstone of
         __imbue = 0x7ffff7c8f4b0 <_IO_default_imbue>
     };
 
-In most of the wstrn functinons the _wide_data filed of a _IO_FILE structure get dereferenced and interacted with, which gives us an opportunity to point it somewhere in binary to perform an arbitrary write
+In most of the wstrn functinons the _wide_data field of a _IO_FILE structure get dereferenced and interacted with, which gives us an opportunity to point it somewhere in the binary to gain a primitive of an arbitrary write
 
 ### Exploitation  
-The house of Drill starts with the assumption that a primitive that allows to create a custom _IO_FILE structure and link it in _IO_list_all *OR* overwrite an existing one with slight margin exists. If all the conditions are met, we shall begin the explanation of this technique. This attack can be triggered in following ways:
+The House of Drill starts with the assumption that a primitive that allows to create a custom _IO_FILE structure and link it in _IO_list_all *OR* overwrite an existing one with slight margin exists. If all the conditions are met, we shall begin the explanation of this technique. This attack could be triggered in following ways:
 
  - Return from main() functinon
  - When libc executes abort from a process
@@ -99,7 +99,7 @@ The house of Drill starts with the assumption that a primitive that allows to cr
         fp->_wide_data->_IO_write_end = snf->overflow_buf;
 
 
-So basically out plain is quite simple. If we point the _wide_data of our _IO_FILE struct anywhere near the write location we can overwrite it with snf -> overflow_buf value
+So basically our plain is quite simple. If we point the _wide_data of our _IO_FILE struct anywhere near the write location we can overwrite it with snf -> overflow_buf value
 
 If we break it down into specific steps, we get something like following
 
@@ -113,4 +113,4 @@ If we break it down into specific steps, we get something like following
 
  - Trigger _IO_flush_all_lock using any method that was listed at the beginning
 
- That's about it with the house of Drill. Hope this technique will help you to solve your next FSOP task.
+ That's about it with the house of Drill. Hope this technique will help you in solving your next FSOP task.
